@@ -283,4 +283,282 @@ myPromiseExample
         console.error("Error:", error);
     });
 
+// ========================================
+// IMPORTANT: Classes are Syntactic Sugar!
+// ========================================
+// The MyPromise class above is actually converted to this function-based code by JS engine:
+
+function MyPromiseFunction(executor) {
+    // Properties (same as constructor)
+    this.state = 'PENDING';
+    this.value = undefined;
+    this.handlers = [];
+    
+    // Create resolve and reject functions
+    const self = this; // Keep reference to 'this'
+    
+    const resolve = (result) => {
+        if (self.state !== 'PENDING') return;
+        self.state = 'FULFILLED';
+        self.value = result;
+        self.handlers.forEach(handler => handler.onFulfilled(result));
+    };
+    
+    const reject = (error) => {
+        if (self.state !== 'PENDING') return;
+        self.state = 'REJECTED';
+        self.value = error;
+        self.handlers.forEach(handler => handler.onRejected(error));
+    };
+    
+    // Execute the executor
+    try {
+        executor(resolve, reject);
+    } catch (error) {
+        reject(error);
+    }
+}
+
+// Methods are added to the prototype (not inside the constructor)
+MyPromiseFunction.prototype.then = function(onFulfilled, onRejected) {
+    const self = this;
+    return new MyPromiseFunction((resolve, reject) => {
+        const handle = () => {
+            if (self.state === 'FULFILLED') {
+                try {
+                    const result = onFulfilled ? onFulfilled(self.value) : self.value;
+                    resolve(result);
+                } catch (error) {
+                    reject(error);
+                }
+            } else if (self.state === 'REJECTED') {
+                if (onRejected) {
+                    try {
+                        const result = onRejected(self.value);
+                        resolve(result);
+                    } catch (error) {
+                        reject(error);
+                    }
+                } else {
+                    reject(self.value);
+                }
+            }
+        };
+        
+        if (self.state === 'PENDING') {
+            self.handlers.push({
+                onFulfilled: (value) => {
+                    try {
+                        const result = onFulfilled ? onFulfilled(value) : value;
+                        resolve(result);
+                    } catch (error) {
+                        reject(error);
+                    }
+                },
+                onRejected: (error) => {
+                    if (onRejected) {
+                        try {
+                            const result = onRejected(error);
+                            resolve(result);
+                        } catch (error) {
+                            reject(error);
+                        }
+                    } else {
+                        reject(error);
+                    }
+                }
+            });
+        } else {
+            handle();
+        }
+    });
+};
+
+MyPromiseFunction.prototype.catch = function(onRejected) {
+    return this.then(null, onRejected);
+};
+
+// Both work exactly the same way:
+const example1 = new MyPromise(() => {}); // Using class
+const example2 = new MyPromiseFunction(() => {}); // Using function
+
+// Key differences in syntax:
+// CLASS:      class MyPromise { constructor() {...} method() {...} }
+// FUNCTION:   function MyPromise() {...}
+//             MyPromise.prototype.method = function() {...}
+
+// ========================================
+// Complete Example with Function-based Promise
+// ========================================
+
+const functionPromiseExample = new MyPromiseFunction((resolve, reject) => {
+    setTimeout(() => {
+        resolve("Function-based Promise resolved!");
+    }, 1500);
+});
+
+functionPromiseExample
+    .then((data) => {
+        console.log(data); // Output: Function-based Promise resolved!
+        return "Value from function promise";
+    })
+    .then((data) => {
+        console.log(data); // Output: Value from function promise
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+
+// You can even chain class-based and function-based promises:
+const mixedExample = new MyPromise((resolve, reject) => {
+    resolve("From class");
+})
+.then((data) => {
+    console.log(data); // Output: From class
+    return new MyPromiseFunction((resolve, reject) => {
+        resolve("From function");
+    });
+})
+.then((data) => {
+    console.log(data); // Output: From function (if both implementations are compatible)
+});
+
+// ========================================
+// Simple Promise Sample Function
+// ========================================
+
+// PROBLEM: This returns a timer ID, not the time!
+function getCurrentTimeWrong(){
+    return setTimeout(() => {
+        const date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        return `${hours}:${minutes}:${seconds}`; // This return doesn't work!
+    }, 1000);
+}
+
+var currentTime = getCurrentTimeWrong();
+console.log("Current Time is: ", currentTime); // Output: a number (timer ID), not time!
+
+// SOLUTION 1: Using Callback
+function getCurrentTimeCallback(callback) {
+    setTimeout(() => {
+        const date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        callback(`${hours}:${minutes}:${seconds}`);
+    }, 1000);
+}
+
+getCurrentTimeCallback((time) => {
+    console.log("Current Time (callback):", time); // Output: 14:30:45 (or current time)
+});
+
+// SOLUTION 2: Using Promise (BEST)
+function getCurrentTimePromise() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const date = new Date();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            resolve(`${hours}:${minutes}:${seconds}`);
+        }, 1000);
+    });
+}
+
+getCurrentTimePromise()
+    .then((time) => {
+        console.log("Current Time (promise):", time); // Output: 14:30:45 (or current time)
+    })
+    .catch((error) => {
+        console.error("Error getting time:", error);
+    });
+
+// ========================================
+// STEP-BY-STEP: What happens when getCurrentTimePromise() executes
+// ========================================
+
+console.log("STEP 1: Calling getCurrentTimePromise()");
+const promiseObject = getCurrentTimePromise();
+console.log("STEP 2: Function returned:", promiseObject);
+// Output: Promise { <pending> }
+// It returns a Promise OBJECT, not the time value!
+
+console.log("STEP 3: Promise state at this moment:");
+console.log("  - state: PENDING");
+console.log("  - value: undefined (no value yet)");
+console.log("  - The setTimeout is scheduled but hasn't executed yet");
+
+console.log("\nSTEP 4: Attaching .then() handler");
+promiseObject.then((time) => {
+    console.log("\nSTEP 6: Inside .then() callback (executed after 1 second)");
+    console.log("  - Promise state: FULFILLED");
+    console.log("  - Promise value:", time);
+    console.log("  - Actual time:", time); // e.g., "14:30:45"
+});
+
+console.log("STEP 5: Code continues immediately (doesn't wait for Promise)");
+console.log("Main execution finished, waiting for setTimeout...\n");
+
+// Timeline visualization:
+console.log("\n========================================");
+console.log("TIMELINE:");
+console.log("========================================");
+console.log("0ms:    getCurrentTimePromise() called");
+console.log("0ms:    Returns Promise { <pending> }");
+console.log("0ms:    setTimeout scheduled for 1000ms");
+console.log("0ms:    .then() callback registered");
+console.log("0ms:    Main code continues (non-blocking)");
+console.log("...     (JavaScript event loop keeps running)");
+console.log("1000ms: setTimeout callback executes");
+console.log("1000ms: resolve() is called with time string");
+console.log("1000ms: Promise state changes to FULFILLED");
+console.log("1000ms: .then() callback executes with the time");
+console.log("========================================\n");
+
+// What the Promise object looks like internally:
+console.log("========================================");
+console.log("PROMISE OBJECT STRUCTURE:");
+console.log("========================================");
+console.log(`
+At 0ms (immediately after getCurrentTimePromise()):
+{
+    [[PromiseState]]: "pending",
+    [[PromiseResult]]: undefined,
+    [[PromiseFulfillReactions]]: [callback function from .then()]
+}
+
+At 1000ms (after setTimeout executes):
+{
+    [[PromiseState]]: "fulfilled",
+    [[PromiseResult]]: "14:30:45",  // The actual time
+    [[PromiseFulfillReactions]]: []  // Empty, already executed
+}
+`);
+console.log("========================================\n");
+
+// SOLUTION 3: Using async/await (CLEANEST)
+async function displayCurrentTime() {
+    const time = await getCurrentTimePromise();
+    console.log("Current Time (async/await):", time); // Output: 14:30:45 (or current time)
+}
+
+displayCurrentTime();
+
+function myPromiseSample(callback){
+
+    this.state = 'PENDING';
+    this.value = undefined;
+    this.callbacks = [];
+
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            callback("Sample Promise resolved!");
+        }, 1000);
+    });
+
+}
 
