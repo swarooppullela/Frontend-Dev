@@ -1,0 +1,250 @@
+{
+  "appName": "SkillSphere",
+  "version": "1.3.5",
+  "meta": {
+    "environment": "production",
+    "supportedLanguages": ["en", "es", "fr"],
+    "featureFlags": {
+      "enableRecommendations": true,
+      "enableCertificates": false,
+      "betaUsers": [101, 103]
+    }
+  },
+  "users": [
+    {
+      "id": 101,
+      "name": "Surya",
+      "role": "student",
+      "isActive": true,
+      "preferences": {
+        "theme": "dark",
+        "notifications": {
+          "email": true,
+          "sms": false,
+          "push": true
+        },
+        "languages": ["en", "fr"]
+      },
+      "enrolledCourseIds": [201, 202, 204],
+      "progressByCourse": {
+        "201": { "completedLectures": 8, "totalLectures": 10, "lastAccessed": "2025-01-10" },
+        "202": { "completedLectures": 3, "totalLectures": 12, "lastAccessed": "2025-01-09" },
+        "204": { "completedLectures": 0, "totalLectures": 5, "lastAccessed": null }
+      }
+    },
+    {
+      "id": 102,
+      "name": "Priya",
+      "role": "student",
+      "isActive": false,
+      "preferences": {
+        "theme": "light",
+        "notifications": {
+          "email": false,
+          "sms": true,
+          "push": false
+        },
+        "languages": ["en"]
+      },
+      "enrolledCourseIds": [201, 203],
+      "progressByCourse": {
+        "201": { "completedLectures": 2, "totalLectures": 10, "lastAccessed": "2024-12-30" },
+        "203": { "completedLectures": 10, "totalLectures": 10, "lastAccessed": "2025-01-02" }
+      }
+    },
+    {
+      "id": 103,
+      "name": "Rahul",
+      "role": "instructor",
+      "isActive": true,
+      "preferences": {
+        "theme": "dark",
+        "notifications": {
+          "email": true,
+          "sms": true,
+          "push": true
+        },
+        "languages": ["en", "es"]
+      },
+      "teachingCourseIds": [201, 203]
+    }
+  ],
+  "courses": [
+    {
+      "id": 201,
+      "title": "JavaScript Deep Dive",
+      "category": "programming",
+      "level": "intermediate",
+      "instructorId": 103,
+      "tags": ["javascript", "frontend", "web"],
+      "price": 1999,
+      "rating": 4.7,
+      "lectures": [
+        { "id": "L1", "title": "Intro to JS", "durationMinutes": 20, "type": "video" },
+        { "id": "L2", "title": "Scopes & Closures", "durationMinutes": 45, "type": "video" },
+        { "id": "L3", "title": "This & Prototypes", "durationMinutes": 50, "type": "video" },
+        { "id": "L4", "title": "Async JS", "durationMinutes": 40, "type": "video" },
+        { "id": "L5", "title": "Project: Todo App", "durationMinutes": 60, "type": "project" }
+      ],
+      "stats": {
+        "totalEnrollments": 320,
+        "completionRate": 0.42,
+        "reviewsByRating": {
+          "5": 180,
+          "4": 90,
+          "3": 30,
+          "2": 15,
+          "1": 5
+        }
+      }
+    },
+    {
+      "id": 202,
+      "title": "React for Professionals",
+      "category": "frontend",
+      "level": "advanced",
+      "instructorId": 103,
+      "tags": ["react", "hooks", "frontend"],
+      "price": 2499,
+      "rating": 4.8,
+      "lectures": [
+        { "id": "R1", "title": "React Basics", "durationMinutes": 30, "type": "video" },
+        { "id": "R2", "title": "Hooks in Depth", "durationMinutes": 50, "type": "video" },
+        { "id": "R3", "title": "State Management", "durationMinutes": 55, "type": "video" },
+        { "id": "R4", "title": "Performance Optimization", "durationMinutes": 45, "type": "video" },
+        { "id": "R5", "title": "Project: Dashboard", "durationMinutes": 70, "type": "project" },
+        { "id": "R6", "title": "Testing Components", "durationMinutes": 40, "type": "video" }
+      ],
+      "stats": {
+        "totalEnrollments": 150,
+        "completionRate": 0.35,
+        "reviewsByRating": {
+          "5": 100,
+          "4": 30,
+          "3": 10,
+          "2": 5,
+          "1": 5
+        }
+      }
+    },
+    {
+      "id": 203,
+      "title": "Git & DevOps Basics",
+      "category": "devops",
+      "level": "beginner",
+      "instructorId": 103,
+      "tags": ["git", "devops", "tools"],
+      "price": 1499,
+      "rating": 4.3,
+      "lectures": [
+        { "id": "G1", "title": "Git Basics", "durationMinutes": 25, "type": "video" },
+        { "id": "G2", "title": "Branching Strategy", "durationMinutes": 35, "type": "video" },
+        { "id": "G3", "title": "CI/CD Pipelines", "durationMinutes": 40, "type": "video" }
+      ],
+      "stats": {
+        "totalEnrollments": 90,
+        "completionRate": 0.6,
+        "reviewsByRating": {
+          "5": 40,
+          "4": 30,
+          "3": 10,
+          "2": 5,
+          "1": 5
+        }
+      }
+    },
+    {
+      "id": 204,
+      "title": "System Design for Frontend",
+      "category": "architecture",
+      "level": "advanced",
+      "instructorId": 103,
+      "tags": ["system-design", "frontend", "architecture"],
+      "price": 2999,
+      "rating": 4.9,
+      "lectures": [],
+      "stats": {
+        "totalEnrollments": 20,
+        "completionRate": 0.1,
+        "reviewsByRating": {
+          "5": 15,
+          "4": 3,
+          "3": 2
+        }
+      }
+    }
+  ],
+  "orders": [
+    {
+      "orderId": "ORD-001",
+      "userId": 101,
+      "createdAt": "2025-01-10T10:15:00Z",
+      "items": [
+        { "courseId": 201, "pricePaid": 1599, "discountApplied": 400 },
+        { "courseId": 202, "pricePaid": 1999, "discountApplied": 500 }
+      ],
+      "payment": {
+        "method": "card",
+        "currency": "INR",
+        "status": "success"
+      }
+    },
+    {
+      "orderId": "ORD-002",
+      "userId": 102,
+      "createdAt": "2025-01-05T08:30:00Z",
+      "items": [
+        { "courseId": 201, "pricePaid": 1799, "discountApplied": 200 },
+        { "courseId": 203, "pricePaid": 1499, "discountApplied": 0 }
+      ],
+      "payment": {
+        "method": "upi",
+        "currency": "INR",
+        "status": "success"
+      }
+    },
+    {
+      "orderId": "ORD-003",
+      "userId": 101,
+      "createdAt": "2025-01-12T12:00:00Z",
+      "items": [
+        { "courseId": 204, "pricePaid": 2499, "discountApplied": 500 }
+      ],
+      "payment": {
+        "method": "card",
+        "currency": "INR",
+        "status": "pending"
+      }
+    }
+  ],
+  "dailyActiveUsers": [
+    {
+      "2025-01-10": [101, 103],
+      "2025-01-11": [101],
+      "2025-01-12": [101, 102, 103]
+    },
+    {
+      "2025-01-05": [102],
+      "2025-01-06": [],
+      "2025-01-07": [101, 102]
+    }
+  ],
+  "categoriesConfig": {
+    "programming": {
+      "color": "#ffcc00",
+      "popularTags": ["javascript", "typescript", "nodejs"]
+    },
+    "frontend": {
+      "color": "#00ccff",
+      "popularTags": ["react", "nextjs", "css"]
+    },
+    "devops": {
+      "color": "#cc00ff",
+      "popularTags": ["git", "docker", "kubernetes"]
+    },
+    "architecture": {
+      "color": "#00ff99",
+      "popularTags": ["system-design", "scalability"]
+    }
+  }
+}
