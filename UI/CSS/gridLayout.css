@@ -1,0 +1,110 @@
+.grid-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.grid-item{
+    background-color: #9085cc;
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+}
+
+/* ========================================
+   CSS COMBINATORS WITH DIFFERENT COLORS
+   ======================================== */
+
+/* 1. DESCENDANT COMBINATOR (space) - Selects ALL descendants */
+/* Targets ALL <p> elements inside .grid-container at any level */
+.grid-container p {
+    color: #ff6b6b;
+    font-weight: bold;
+    background-color: #ffe5e5;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+/* 2. CHILD COMBINATOR (>) - Selects DIRECT children only */
+/* Targets only DIRECT .grid-item children of .grid-container */
+.grid-container > .grid-item {
+    border-left: 5px solid #4ecdc4;
+}
+
+/* 3. ADJACENT SIBLING COMBINATOR (+) - Selects immediate next sibling */
+/* Targets .grid-item that comes IMMEDIATELY after .special */
+.grid-item.special + .grid-item {
+    background-color: #ffd93d;
+    color: #333;
+}
+
+/* Also color the span inside the adjacent sibling */
+.grid-item.special + .grid-item span {
+    color: #6c5ce7;
+    font-size: 1.2em;
+}
+
+/* 4. GENERAL SIBLING COMBINATOR (~) - Selects all following siblings */
+/* Targets ALL .grid-item elements that come after .special */
+.grid-item.special ~ .grid-item {
+    border-right: 5px solid #a29bfe;
+}
+
+/* 5. COMBINING MULTIPLE COMBINATORS */
+/* Descendant + Child: Direct child span inside any .grid-item */
+.grid-container > .grid-item > span {
+    color: #2d3436;
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
+/* 6. FIRST CHILD with color */
+.grid-container > .grid-item:first-child {
+    background-color: #74b9ff;
+    color: white;
+}
+
+/* 7. LAST CHILD with color */
+.grid-container > .grid-item:last-child {
+    background-color: #fd79a8;
+    color: white;
+}
+
+/* 8. NTH-CHILD with colors */
+.grid-container > .grid-item:nth-child(even) {
+    background-color: #55efc4;
+}
+
+/* 9. SPECIAL class with unique color */
+.grid-item.special {
+    background-color: #fdcb6e;
+    border: 3px dashed #e17055;
+    color: #2d3436;
+}
+
+/* 10. Nested descendant with combined selectors */
+.grid-container .grid-item p {
+    margin: 8px 0 0 0;
+    font-size: 0.9em;
+}
+
+/* Tablet: Hide Column 3 (show 2 columns) */
+@media (min-width: 767px) and (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-item:nth-child(3) {
+        display: none;
+    }
+}
+
+/* Mobile: Hide Column 2 and 3 (show 1 column) */
+@media (max-width: 766px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    .grid-item:nth-child(2),
+    .grid-item:nth-child(3) {
+        display: none;
+    }
+}

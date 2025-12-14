@@ -664,7 +664,7 @@ console.log("Accessory names by line: ", accessoryNamesByLine());
 const accessoryNamesByLineEntries = () =>
   Object.entries(data?.lineDetails?.lineInfo || {}).reduce(
     (acc, [lineKey, lineData]) => {
-      acc[lineKey] = lineData?.accessories?.map(a => a.name) || [];
+      acc[lineKey] = lineData?.accessories?.map(a => a?.name) || [];
       return acc;
     },
     {}
