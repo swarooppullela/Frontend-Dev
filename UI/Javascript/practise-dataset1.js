@@ -671,4 +671,43 @@ const accessoryNamesByLineEntries = () =>
   );
 
 
+const totalAccessoriesPricebyLine = () => {
+  const lineInfo = data?.lineDetails?.lineInfo ?? {};
+  return Object.keys(lineInfo)?.reduce((acc, line) => {
+    let price = lineInfo[line]?.accessories?.reduce((acc, data) => {
+      return acc+data?.price;
+    },0);
+    acc[line] = price;
+    return acc
+  },{})
+  
+}
 
+console.log("Accessory price per line: ", totalAccessoriesPricebyLine());
+
+// Above problem using entries
+
+const totalAccessoriesPricebyLineEntries = () => {
+  const lineInfo = data?.lineDetails?.lineInfo ?? {};
+  return Object.entries(lineInfo)?.reduce((acc, [line, lineData]) => {
+    let price = lineData?.accessories?.reduce((acc, data) => {
+      return acc+data?.price;
+    },0);
+    acc[line] = price;
+    return acc
+  },{})
+  
+}
+
+console.log("Accessory price per line: ", totalAccessoriesPricebyLineEntries());
+
+// Find lines with zero accessories
+
+const linesWithZeroAccessories = () => {
+  const lineInfo = data?.lineDetails?.lineInfo ?? {};
+  return Object.keys(lineInfo)?.filter(line => {
+    return !lineInfo[line]?.accessories.length
+  });
+}
+
+console.log("Lines with zero accessories: ", linesWithZeroAccessories());
