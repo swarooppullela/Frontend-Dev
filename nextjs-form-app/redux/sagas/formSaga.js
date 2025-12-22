@@ -20,8 +20,3 @@ function* submitFormSaga(action) {
 export function* watchFormSubmit() {
   yield takeLatest(SUBMIT_FORM_REQUEST, submitFormSaga);
 }
-
-// Root saga
-export default function* rootSaga() {
-  yield watchFormSubmit();
-}

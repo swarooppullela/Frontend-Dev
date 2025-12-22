@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitFormRequest, resetForm } from '../redux/actions/formActions';
 import styles from '../styles/ContactForm.module.css';
+import { Confirmation } from '@/components/Confirmation';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
@@ -112,6 +113,7 @@ const ContactForm = () => {
   return (
     <div className={styles.formContainer}>
       <div className={styles.formCard}>
+        <Confirmation />
         <h1 className={styles.title}>Contact Us</h1>
         <p className={styles.subtitle}>Fill out the form below and we'll get back to you soon!</p>
 

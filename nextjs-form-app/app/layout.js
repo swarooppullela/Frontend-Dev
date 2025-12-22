@@ -3,9 +3,17 @@
 import { Provider } from 'react-redux';
 import store from '../redux/store';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { ThemeContext } from '../hooks/useToggle';
 import '../styles/globals.css';
+import { useState } from 'react';
+
 
 export default function RootLayout({ children }) {
+  const [theme, setTheme] = useState('dark');
+  
+  const changeTheme = () => {
+    setTheme((prev) => prev === 'dark' ? 'light' : 'dark');
+  };
   return (
     <html lang="en">
       <head>
@@ -16,7 +24,9 @@ export default function RootLayout({ children }) {
       <body>
         <Provider store={store}>
           <ErrorBoundary>
-            {children}
+            <ThemeContext.Provider value={{theme, changeTheme}}>
+              {children}
+            </ThemeContext.Provider>
           </ErrorBoundary>
         </Provider>
       </body>
