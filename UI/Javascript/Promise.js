@@ -562,3 +562,134 @@ function myPromiseSample(callback){
 
 }
 
+// Goal : Create a resuable function which calls an api with a retry limit if failed
+
+// Version 1: Without parameters
+function callProfileApi(){
+    return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+            const success = Math.random() > 0.7;
+            if(success)
+                resolve("Profile data received")
+            reject("API Failed");
+        }, 1000)
+    })
+}
+
+function retry(fn, maxAttempts){
+    let count = 0;
+    function execute(){
+        count++;
+        return fn().catch((err) => {
+            if(count > maxAttempts)
+                throw err;
+            console.log('Retrying...', count);
+            return execute();
+        })
+    }
+    return execute();
+}
+
+retry(callProfileApi, 3)
+.then((data)=> console.log(data))
+.catch((err)=> {console.error(err)})
+
+// Version 2: With parameters
+function callProfileApiWithParams(userId, token){
+    return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+            const success = Math.random() > 0.7;
+            if(success)
+                resolve(`Profile data for user ${userId} received with token ${token}`)
+            reject(`API Failed for user ${userId}`);
+        }, 1000)
+    })
+}
+
+// Solution 1: Using rest parameters and spread operator
+function retryWithParams(fn, maxAttempts, ...args){
+    let count = 0;
+    function execute(){
+        count++;
+        return fn(...args).catch((err) => {
+            if(count >= maxAttempts)
+                throw err;
+            console.log('Retrying...', count);
+            return execute();
+        })
+    }
+    return execute();
+}
+
+// Usage: Pass the function and its arguments
+retryWithParams(callProfileApiWithParams, 3, '12345', 'abc-token')
+.then((data)=> console.log(data))
+.catch((err)=> {console.error(err)})
+
+// Solution 2: Using a wrapper function (more flexible)
+function retryWithWrapper(fn, maxAttempts){
+    let count = 0;
+    function execute(){
+        count++;
+        return fn().catch((err) => {
+            if(count >= maxAttempts)
+                throw err;
+            console.log('Retrying...', count);
+            return execute();
+        })
+    }
+    return execute();
+}
+
+// Usage: Wrap the API call with its parameters
+retryWithWrapper(() => callProfileApiWithParams('67890', 'xyz-token'), 3)
+.then((data)=> console.log(data))
+.catch((err)=> {console.error(err)})
+
+// Solution 3: More generic retry with options
+function retryAdvanced(promiseFn, options = {}){
+    const { 
+        maxAttempts = 3, 
+        delay = 0, 
+        onRetry = null 
+    } = options;
+    
+    let count = 0;
+    
+    function execute(){
+        count++;
+        return promiseFn().catch((err) => {
+            if(count >= maxAttempts){
+                throw new Error(`Failed after ${maxAttempts} attempts: ${err}`);
+            }
+            
+            if(onRetry) onRetry(count, err);
+            
+            console.log(`Retry attempt ${count}/${maxAttempts}`);
+            
+            // Optional delay between retries
+            if(delay > 0){
+                return new Promise(resolve => setTimeout(resolve, delay))
+                    .then(() => execute());
+            }
+            
+            return execute();
+        })
+    }
+    return execute();
+}
+
+// Usage with options
+retryAdvanced(
+    () => callProfileApiWithParams('99999', 'premium-token'), 
+    { 
+        maxAttempts: 5, 
+        delay: 500,
+        onRetry: (attempt, error) => {
+            console.log(`Custom retry handler: Attempt ${attempt}, Error: ${error}`)
+        }
+    }
+)
+.then((data)=> console.log('Success:', data))
+.catch((err)=> {console.error('Final error:', err)})
+

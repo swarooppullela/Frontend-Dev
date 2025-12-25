@@ -41,6 +41,34 @@
                 </div>
             </section>
         </main>
+
+        <!-- Event Delegation Example -->
+        <section style="max-width: 600px; margin: 40px auto; padding: 20px; border: 2px solid #333; border-radius: 8px;">
+            <h2 style="text-align: center; margin-bottom: 20px;">Event Delegation Demo</h2>
+            
+            <div id="taskList" style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+                <h3 style="margin-top: 0;">Task List (Click any task)</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li class="task" data-id="1" style="padding: 10px; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;">
+                        <span class="task-name">Task 1: Complete project</span>
+                        <button class="delete-btn" style="float: right; padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+                    </li>
+                    <li class="task" data-id="2" style="padding: 10px; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;">
+                        <span class="task-name">Task 2: Review code</span>
+                        <button class="delete-btn" style="float: right; padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+                    </li>
+                    <li class="task" data-id="3" style="padding: 10px; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;">
+                        <span class="task-name">Task 3: Write documentation</span>
+                        <button class="delete-btn" style="float: right; padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+                    </li>
+                </ul>
+                <button id="addTask" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Add New Task</button>
+            </div>
+
+            <div id="output" style="margin-top: 20px; padding: 10px; background: #e8f5e9; border-radius: 4px; min-height: 40px;">
+                <strong>Event Log:</strong> <span id="eventLog">Click on tasks or buttons to see event delegation in action!</span>
+            </div>
+        </section>
     </div>
 
     <footer>
@@ -48,6 +76,61 @@
             <p>Grid Layout by Pullela Sai Swaroop</p>
         </div>
     </footer>
+
+    <script>
+        // Event Delegation Implementation
+        // Instead of adding event listeners to each task item, 
+        // we add ONE listener to the parent container (#taskList)
+        
+        const taskList = document.getElementById('taskList');
+        const eventLog = document.getElementById('eventLog');
+        let taskCounter = 4;
+
+        // Single event listener on parent container
+        taskList.addEventListener('click', function(event) {
+            const target = event.target;
+
+            // Handle delete button clicks
+            if (target.classList.contains('delete-btn')) {
+                const taskItem = target.closest('.task');
+                const taskId = taskItem.getAttribute('data-id');
+                taskItem.remove();
+                eventLog.textContent = `Task ${taskId} deleted using event delegation!`;
+                return;
+            }
+
+            // Handle task item clicks (excluding button clicks)
+            if (target.classList.contains('task-name')) {
+                const taskItem = target.closest('.task');
+                const taskId = taskItem.getAttribute('data-id');
+                taskItem.style.background = taskItem.style.background === 'lightgreen' ? 'white' : 'lightgreen';
+                eventLog.textContent = `Task ${taskId} toggled! Event bubbled up to parent.`;
+                return;
+            }
+
+            // Handle add task button
+            if (target.id === 'addTask') {
+                const newTask = document.createElement('li');
+                newTask.className = 'task';
+                newTask.setAttribute('data-id', taskCounter);
+                newTask.style.cssText = 'padding: 10px; margin: 5px 0; background: white; border-radius: 4px; cursor: pointer;';
+                newTask.innerHTML = `
+                    <span class="task-name">Task ${taskCounter}: New task</span>
+                    <button class="delete-btn" style="float: right; padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+                `;
+                document.querySelector('#taskList ul').appendChild(newTask);
+                eventLog.textContent = `Task ${taskCounter} added! No need to attach new event listeners - delegation handles it!`;
+                taskCounter++;
+                return;
+            }
+        });
+
+        // Benefits of Event Delegation:
+        // 1. Better performance - only one event listener instead of many
+        // 2. Works with dynamically added elements (see "Add New Task")
+        // 3. Less memory usage
+        // 4. Simpler code maintenance
+    </script>
 </body>
 
 </html>
