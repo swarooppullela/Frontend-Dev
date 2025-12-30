@@ -3,6 +3,7 @@
 import { Provider } from 'react-redux';
 import store from '../redux/store';
 import ErrorBoundary from '../components/ErrorBoundary';
+import SessionTimeout from '../components/SessionTimeout';
 import { ThemeContext } from '../hooks/useToggle';
 import '../styles/globals.css';
 import { useState } from 'react';
@@ -25,6 +26,17 @@ export default function RootLayout({ children }) {
         <Provider store={store}>
           <ErrorBoundary>
             <ThemeContext.Provider value={{theme, changeTheme}}>
+              <SessionTimeout 
+                timeoutDuration={15 * 60 * 1000}  // 15 minutes
+                warningDuration={2 * 60 * 1000}   // 2 minutes warning
+                onTimeout={() => {
+                  console.log('Session expired');
+                  // Custom logout logic can go here
+                }}
+                onWarning={() => {
+                  console.log('Session expiring soon');
+                }}
+              />
               {children}
             </ThemeContext.Provider>
           </ErrorBoundary>

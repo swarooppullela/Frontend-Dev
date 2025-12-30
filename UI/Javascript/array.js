@@ -79,5 +79,31 @@ function inputCheck(...args) {
 }
 
 
+//input [5, 6, 8, 9,10, 13, 15];
+// output: [7,11,12,14]
+
+let arr = [5, 6, 8, 9, 10, 13, 15];
+
+let missingElements = (arr) => {
+  let res = [];
+
+  arr.map((ele, index) => {
+    if (index === 0) return; // no previous for first element
+
+    let prevEle = arr[index - 1];
+
+    // push all missing numbers between prevEle and ele
+    while (ele - prevEle > 1) {
+      prevEle++;
+      res.push(prevEle);
+    }
+  });
+
+  return res;
+};
+
+console.log(missingElements(arr)); // [7, 11, 12, 14]
+
+
 
 
