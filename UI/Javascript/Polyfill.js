@@ -25,3 +25,10 @@ console.log(john.age);  // Output: 30
 
 // Polyfill for bind
 
+Function.prototype.myBind = function(...args){
+  let obj=this;
+  return function(...nArgs){
+    obj.apply(args[0], [...args[1], ...nArgs]);
+  }
+}
+

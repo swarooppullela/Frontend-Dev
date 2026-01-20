@@ -30,7 +30,6 @@ function Root({children}:{children: React.ReactNode}){
         return `${PRODUCT_API_URL}?sort=${sortOrder}`;
     },[sortOrder]);
     const { data, loading, error } = useFetch<IProduct[]>(url);
-    console.log("gsdhjssjd", data);
     const value: ProductsCtxValue = {
         sortOrder,
         setSortOrder,

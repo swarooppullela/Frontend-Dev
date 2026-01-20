@@ -12,8 +12,8 @@ function fetchData(callback) {
 }
 
 // Using the callback function
-fetchData(() => {
-    console.log(); // Output: Data received
+fetchData((data) => {
+    console.log(data); // Output: Data received
 });
 
 // However, callbacks can lead to "callback hell" when dealing with multiple asynchronous operations
