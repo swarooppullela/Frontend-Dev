@@ -1,28 +1,28 @@
-function callApi1(callback){
-    return setTimeout(()=>{
+function callApi1(callback) {
+    return setTimeout(() => {
         callback("Data from api 1");
     }, 1000)
 }
 
-function callApi2(callback){
-    return setTimeout(()=>{
+function callApi2(callback) {
+    return setTimeout(() => {
         callback("Data from api 2");
-    },1000)
+    }, 1000)
 }
 
-function callApi3(callback){
-    return setTimeout(()=>{
+function callApi3(callback) {
+    return setTimeout(() => {
         callback("Data from api 3");
     }, 1000);
 }
 
 // call 3 apis sequential using callback
 
-callApi1((data)=>{
+callApi1((data) => {
     console.log(data);
-    callApi2((data)=>{
+    callApi2((data) => {
         console.log(data)
-        callApi3((data)=>{
+        callApi3((data) => {
             console.log(data);
         })
     })
@@ -35,25 +35,25 @@ callApi3();
 
 // using promise
 
-function callApi1Promise(){
-    return new Promise((resolve, reject)=>{
-        setTimeout(()=>{
+function callApi1Promise() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
             resolve("Data from api 1");
         }, 1000)
     })
 }
 
-function callApi2Promise(){
-    return new Promise((resolve, reject)=>{
-        setTimeout(()=>{
+function callApi2Promise() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
             resolve("Data from api 2");
         }, 1000)
     })
 }
 
-function callApi3Promise(){
-    return new Promise((resolve, reject)=>{
-        setTimeout(()=>{
+function callApi3Promise() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
             resolve("Data from api 3");
         }, 1000)
     });
@@ -62,18 +62,18 @@ function callApi3Promise(){
 // using promise
 
 callApi1Promise()
-    .then((data)=>{
+    .then((data) => {
         console.log(data);
         return callApi2Promise();
     })
-    .then((data)=>{
+    .then((data) => {
         console.log(data);
         return callApi3Promise();
     })
-    .then((data)=>{
+    .then((data) => {
         console.log(data);
     })
-    .catch((err)=>{
+    .catch((err) => {
         console.error("Api Error", err);
     })
 
@@ -98,12 +98,12 @@ callApis();
 
 // so if we want to call apis in parallel then use these promise all, allSettled, race, any
 Promise.all([callApi1Promise(), callApi2Promise(), callApi3Promise()])
-        .then((data)=>{
-            console.log("Parallel API calls result:", data);
-        })
-        .catch((err)=>{
-            console.error("One or more APIs failed:", err);
-        })
+    .then((data) => {
+        console.log("Parallel API calls result:", data);
+    })
+    .catch((err) => {
+        console.error("One or more APIs failed:", err);
+    })
 
 
 
@@ -142,31 +142,31 @@ Promise.prototype.myAll = function (iterable) {
 
 Promise.prototype.myAllSetteled = function (iterable) {
     return new Promise((resolve, reject) => {
-        if(!Array.isArray(iterable))
+        if (!Array.isArray(iterable))
             throw new Error("Input must be iterable");
-        if(iterable.length === 0){
+        if (iterable.length === 0) {
             resolve([]);
             return;
         }
         let completed = 0;
         let results = [];
-        iterable.forEach((promise, index)=>{
+        iterable.forEach((promise, index) => {
             Promise.resolve(promise)
-                .then((data)=>{
+                .then((data) => {
                     results[index] = {
                         status: 'fulfilled',
                         data
                     };
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     results[index] = {
                         status: 'rejected',
                         err
                     };
                 })
-                .finally(()=>{
+                .finally(() => {
                     completed++;
-                    if(completed === iterable.length)
+                    if (completed === iterable.length)
                         resolve(results);
                 })
         })
@@ -174,28 +174,70 @@ Promise.prototype.myAllSetteled = function (iterable) {
     })
 }
 
-Promise.prototype.myAny = function(iterable){
+Promise.prototype.myAny = function (iterable) {
     return new Promise((resolve, reject) => {
-        if(!Array.isArray(iterable))
+        if (!Array.isArray(iterable))
             throw new Error("Input must be iterable");
-        if(iterable.length === 0){
+        if (iterable.length === 0) {
             resolve([]);
             return;
         }
         let completed = 0;
         let errors = [];
-        iterable.forEach((promise, index)=>{
+        iterable.forEach((promise, index) => {
             Promise.resolve(promise)
-                .then((data)=>{
+                .then((data) => {
                     resolve(data);
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     errors[index] = err;
                     completed++;
-                    if(completed === iterable.length)
+                    if (completed === iterable.length)
                         reject(new AggregateError(errors, "All promises were rejected"));
                 })
         });
 
     });
 }
+
+let obj1 = {
+    name: "Swaroop",
+    place: "Peddapuram"
+}
+
+displayDetails = function (district, state, country) {
+    console.log(this);
+    console.log(this.name + ' from ' + this.place + ' ' + district + ' ' + state + ' ' + country);
+}
+
+let obj2 = {
+    name: "Surya",
+    place: "Hyderabad",
+}
+
+displayDetails.call(obj1, 'East Godavari', "AP");
+displayDetails.call(obj2, "RG", "TG");
+
+displayDetails.apply(obj1, ['Mumbai', "MH"]);
+
+
+let showDetails = displayDetails.bind(obj1, 'Mumbai', "MH");
+showDetails('India');
+
+//polyfill for bind
+Function.prototype.mybind = function (...args) {
+    let obj = this;
+    console.log("this inside mybind", this);
+    let params = args.slice(1);
+    return function (...args2) {
+        obj.apply(args[0], [...params, ...args2]);
+    }
+}
+
+let showDetail = displayDetails.mybind(obj1, 'Mumbai', "MH");
+showDetail('Aus');
+
+
+
+
+
